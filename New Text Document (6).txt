@@ -1,0 +1,57 @@
+
+Source Directory = T:\d\src
+
+T:\d\src\Movies\Ant-Man
+T:\d\src\Movies\Ant-Man\_sub
+T:\d\src\Movies\Assassins Creed
+T:\d\src\Movies\Captain America Civil War
+T:\d\src\Movies\Captain America Civil War\_sub
+
+or could look like this
+
+Source Directory = T:\d\src\sub\sub2
+
+T:\d\sub\sub2\src\Movies\Ant-Man
+T:\d\sub\sub2\src\Movies\Ant-Man\_sub
+T:\d\sub\sub2\src\Movies\Assassins Creed
+T:\d\sub\sub2\src\Movies\Captain America Civil War
+T:\d\sub\sub2\src\Movies\Captain America Civil War\_sub
+
+List<string> mList_src = new List<string>
+List should contain:
+Movies\Ant-Man
+Movies\Ant-Man\_sub
+Movies\Assassins Creed
+Movies\Captain America Civil War
+Movies\Captain America Civil War\_sub
+
+Treeview_mov should look like:
+
+-Movies-|
+        - AntMan
+        - AntMan-|
+        |        -_sub
+        - Assassins Creed
+        - Captain America Civil War
+        - Captain America Civil War-|
+        |                           -_sub
+
+-----------------------------------------------------------------------------------------------------------------------
+TV Shows is very similar
+
+T:\d\src\TV Shows\Star Trek Discovery\Season 1
+T:\d\src\TV Shows\Star Trek Discovery\Season 2
+T:\d\src\TV Shows\Westworld\Season 01
+T:\d\src\TV Shows\Westworld\Season 01
+
+
+Treeview_tvs should look like this
+
+-TV Shows-|
+          -Star Trek Discovery-|
+          |                     -Season 1
+          |                     -Season 2
+          -Westworld-|
+                     -Season 1
+                     -Season 2
+           
