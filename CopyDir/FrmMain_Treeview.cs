@@ -6,13 +6,14 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Text;
 
 
 namespace CopyDir
 {
     public partial class FrmMain_Treeview : Form
     {
+        #region ========== Declare Variables ===============
+
         public string sDir;
         public string dDir;
 
@@ -24,6 +25,7 @@ namespace CopyDir
         public int dlLength;
         public string dl;
 
+        public long total;
         public long total_m;
         public long total_tv;
 
@@ -49,6 +51,10 @@ namespace CopyDir
         public List<string> list1;
         public List<string> list2;
 
+        #endregion
+
+        #region ========== FrmMain_TreeView ================
+
         public FrmMain_Treeview()
         {
             InitializeComponent();
@@ -58,7 +64,7 @@ namespace CopyDir
             this.BringToFront();
             var assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             var fileVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(assemblyLocation).FileVersion;
-            this.Text = "Compare-and-Copy Directory Tool Tree    |     Version: " + fileVersion;
+            this.Text = "Compare-and-Copy Video Archive   |     Version: " + fileVersion;
 
             sDir = Properties.Settings.Default.sDir;
             dDir = Properties.Settings.Default.dDir;
@@ -98,6 +104,10 @@ namespace CopyDir
             lblDDFS.Text = myDriveFreeSpaceTotal;
         }
 
+        #endregion
+
+        #region ========== Subroutines & Functions =========
+
         static void ChangeLabelText(string text, Color? color = null)
         {
             //Display the current file being copied on the form
@@ -106,7 +116,6 @@ namespace CopyDir
             Program.frmMain_Treeview.lblCurFN.ForeColor = color ?? Color.Black;
             Program.frmMain_Treeview.lblCurFN.Update();
         }
-
         public List<string> Get_Mov_Paths(string tDir)
         {
             List<string> dnList = new List<string>();
@@ -144,7 +153,6 @@ namespace CopyDir
             }
             return dnList;
         }
-
         public List<string> Get_TvS_Paths(string tDir)
         {
             List<string> dnList = new List<string>();
@@ -181,7 +189,7 @@ namespace CopyDir
             }
             return dnList;
         }
-        public void Compare(string cType)
+        public void CompareLists(string cType)
         {
 
             dDir = txt_dDir.Text;
@@ -328,7 +336,25 @@ namespace CopyDir
             srcFilePaths.Sort();
             dstFilePaths.Sort();
         }
+        private void CompareSpace(long rSpace, long dSpace)
+        {
+            if (rSpace > dSpace)
+            {
+                lblDDFS.ForeColor = Color.Red;
+                lblTSN.ForeColor = Color.Red;
 
+                string myTotal = Sized.ToPrettySize(rSpace, 2);
+                lblTSN.Text = myTotal;
+            }
+            else
+            {
+                lblDDFS.ForeColor = Color.LimeGreen;
+                lblTSN.ForeColor = Color.LimeGreen;
+
+                string myTotal = Sized.ToPrettySize(rSpace, 2);
+                lblTSN.Text = myTotal;
+            }
+        }
         void ExpandToLevel(TreeNodeCollection nodes, int level)
         {
             if (level > 0)
@@ -340,7 +366,6 @@ namespace CopyDir
                 }
             }
         }
-
         private void CopyDirContents(string src)
         {
             //List<string> fList = new List<string>();
@@ -372,7 +397,6 @@ namespace CopyDir
             }
             //int x = 0;
         }
-
         private long GetTotalFreeSpace(string driveName)
         {
             foreach (DriveInfo drive in DriveInfo.GetDrives())
@@ -385,6 +409,11 @@ namespace CopyDir
             return -1;
         }
 
+        #endregion
+
+        #region ========== Events ==========================
+
+        // Click Events
         private void btn_sDir_Click(object sender, EventArgs e)
         {
             if (fbd_sDir.ShowDialog() == DialogResult.OK)
@@ -392,7 +421,6 @@ namespace CopyDir
                 txt_sDir.Text = fbd_sDir.SelectedPath;
             }
         }
-
         private void btn_dDir_Click(object sender, EventArgs e)
         {
             if (fbd_dDir.ShowDialog() == DialogResult.OK)
@@ -400,7 +428,6 @@ namespace CopyDir
                 txt_dDir.Text = fbd_dDir.SelectedPath;
             }
         }
-
         private void BtnStartCopy_Click(object sender, EventArgs e)
         {
             if (srcFilePaths.Count > 0)
@@ -419,19 +446,6 @@ namespace CopyDir
                 MessageBox.Show("Either the Compare did not yeild any results or you have not yet performed a Compare", "NO FILES FOUND TO COPY!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-
-        private void Txt_sDir_TextChanged(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.sDir = txt_sDir.Text;
-            Properties.Settings.Default.Save();
-        }
-
-        private void Txt_dDir_TextChanged(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.dDir = txt_dDir.Text;
-            Properties.Settings.Default.Save();
-        }
-
         private void RbTV_Mov_Click(object sender, EventArgs e)
         {
             gbFoundMov.Text = "Movies";
@@ -445,7 +459,7 @@ namespace CopyDir
             rbMov.ForeColor = Color.Silver;
 
             total_m = 0;
-            Compare("Movies");
+            CompareLists("Movies");
             if (fsList_m == null)
             {
                 total_m = 0;
@@ -456,7 +470,7 @@ namespace CopyDir
             }
 
             total_tv = 0;
-            Compare("TV Shows");
+            CompareLists("TV Shows");
             if (fsList_tv == null)
             {
                 total_tv = 0;
@@ -466,16 +480,11 @@ namespace CopyDir
                 total_tv = fsList_tv.Sum(x => Convert.ToInt64(x));
             }
 
-            long total = total_m + total_tv;
-            string myTotal = Sized.ToPrettySize(total, 1);
-
-            lblTSN.Text = myTotal;
+            total = total_m + total_tv;
+            CompareSpace(total, driveFreeSpace);
         }
-
         private void RbTV_Click(object sender, EventArgs e)
         {
-            string myTotal = "0";
-
             gbFoundMov.Text = "Movies";
             gbFoundTVS.Text = "TV Shows";
 
@@ -487,7 +496,7 @@ namespace CopyDir
             rbMov.ForeColor = Color.Silver;
 
             total_tv = 0;
-            Compare("TV Shows");
+            CompareLists("TV Shows");
             if (fsList_tv == null)
             {
                 total_tv = 0;
@@ -497,11 +506,8 @@ namespace CopyDir
                 total_tv = fsList_tv.Sum(x => Convert.ToInt64(x));
             }
 
-            myTotal = Sized.ToPrettySize(total_tv, 1);
-
-            lblTSN.Text = myTotal;
+            CompareSpace(total_tv, driveFreeSpace);
         }
-
         private void RbMov_Click(object sender, EventArgs e)
         {
             gbFoundMov.Text = "Movies";
@@ -515,7 +521,7 @@ namespace CopyDir
             rbMov.ForeColor = Color.LimeGreen;
 
             total_m = 0;
-            Compare("Movies");
+            CompareLists("Movies");
             if (fsList_m == null)
             {
                 total_m = 0;
@@ -526,25 +532,22 @@ namespace CopyDir
                 total_m = fsList_m.Sum(x => Convert.ToInt64(x));
             }
 
-            string myTotal = Sized.ToPrettySize(total_m, 1);
-            int iLength = myTotal.Length;
-            int yLength = myDriveFreeSpaceTotal.Length;
-            decimal i = Convert.ToDecimal(myTotal.Remove(iLength - 3));
-            decimal y = Convert.ToDecimal(myDriveFreeSpaceTotal.Remove(yLength - 3));
-
-            if (total_m > driveFreeSpace)
-            {
-                lblDDFS.ForeColor = Color.Red;
-                lblTSN.ForeColor = Color.Red;
-                lblTSN.Text = myTotal;
-            }
-            else
-            {
-                lblDDFS.ForeColor = Color.LimeGreen;
-                lblTSN.ForeColor = Color.LimeGreen;
-                lblTSN.Text = myTotal;
-            }
-
+            CompareSpace(total_m, driveFreeSpace);
         }
+
+
+        // Misc Events
+        private void Txt_sDir_TextChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.sDir = txt_sDir.Text;
+            Properties.Settings.Default.Save();
+        }
+        private void Txt_dDir_TextChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.dDir = txt_dDir.Text;
+            Properties.Settings.Default.Save();
+        }
+
+        #endregion
     }
 }
