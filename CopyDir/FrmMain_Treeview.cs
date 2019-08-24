@@ -58,6 +58,9 @@ namespace CopyDir
         public FrmMain_Treeview()
         {
             InitializeComponent();
+            this.BringToFront();
+            this.DoubleBuffered = true;
+           
         }
         private void frmMain_Treeview_Load(object sender, EventArgs e)
         {
@@ -92,9 +95,7 @@ namespace CopyDir
             mainNode_tvs.Text = "TV Shows";
             this.tvTVShows.Nodes.Add(mainNode_tvs);
 
-
             ChangeLabelText("Waiting for copy Process to Start!", Color.Red);
-
 
             dlLength = dDir.Length;
             dl = dDir.Remove(3, dlLength - 3);
@@ -146,7 +147,6 @@ namespace CopyDir
                             }
                         }
                     }
-
 
                 }
 
@@ -368,8 +368,6 @@ namespace CopyDir
         }
         private void CopyDirContents(string src)
         {
-            //List<string> fList = new List<string>();
-
             string dPath = src.Replace(sDir, dDir);
 
             DirectoryInfo di = new DirectoryInfo(src);
@@ -386,7 +384,6 @@ namespace CopyDir
 
                 if (!File.Exists(dFile))
                 {
-
                     FileSystem.CopyFile(sFile.ToString(), dFile, UIOption.AllDialogs, UICancelOption.DoNothing);
 
                     //Log the file that was copied after it finishes.
@@ -395,7 +392,6 @@ namespace CopyDir
                     Log.Message(logtext, Program.frmMain_Treeview.txt_dDir.Text, logFileName);
                 }
             }
-            //int x = 0;
         }
         private long GetTotalFreeSpace(string driveName)
         {
