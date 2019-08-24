@@ -246,8 +246,10 @@
             // 
             // gbFoundMov
             // 
+            this.gbFoundMov.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.gbFoundMov.Controls.Add(this.tvMovies);
             this.gbFoundMov.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbFoundMov.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gbFoundMov.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbFoundMov.ForeColor = System.Drawing.Color.Yellow;
             this.gbFoundMov.Location = new System.Drawing.Point(30, 162);
@@ -396,8 +398,10 @@
             // 
             // gbFoundTVS
             // 
+            this.gbFoundTVS.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.gbFoundTVS.Controls.Add(this.tvTVShows);
             this.gbFoundTVS.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbFoundTVS.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gbFoundTVS.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbFoundTVS.ForeColor = System.Drawing.Color.Yellow;
             this.gbFoundTVS.Location = new System.Drawing.Point(691, 162);

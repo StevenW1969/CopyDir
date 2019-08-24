@@ -67,7 +67,7 @@ namespace CopyDir
             this.BringToFront();
             var assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             var fileVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(assemblyLocation).FileVersion;
-            this.Text = "Compare-and-Copy Video Archive   |     Version: " + fileVersion;
+            this.Text = "Compare-and-Copy Movies & TV Shows Library  |     Version: " + fileVersion;
 
             sDir = Properties.Settings.Default.sDir;
             dDir = Properties.Settings.Default.dDir;
